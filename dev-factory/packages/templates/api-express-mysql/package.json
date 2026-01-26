@@ -16,6 +16,10 @@
     "verify": "npm run ruler:check && npm run lint && npm run test",
     "process": "bash ./scripts/process.sh",
     "process:watch": "bash ./scripts/watch-roadmap.sh",
+    "ai:prompt": "bash ./scripts/ai/generate-opencode-prompt.sh",
+    "ai:init-plan": "bash ./scripts/ai/init-plan.sh",
+    "ai:run": "bash ./scripts/ai/run-opencode.sh",
+    "ai:demo": "bash ./scripts/ai/demo.sh",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy",
     "prisma:studio": "prisma studio"

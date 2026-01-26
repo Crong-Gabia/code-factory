@@ -18,6 +18,9 @@
     "process:watch": "bash ./scripts/watch-roadmap.sh",
     "ai:prompt": "bash ./scripts/ai/generate-opencode-prompt.sh",
     "ai:task": "bash ./scripts/ai/task.sh",
+    "ai:init-plan": "bash ./scripts/ai/init-plan.sh",
+    "ai:run": "bash ./scripts/ai/run-opencode.sh",
+    "ai:demo": "bash ./scripts/ai/demo.sh",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy",
     "prisma:studio": "prisma studio"

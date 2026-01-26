@@ -23,6 +23,21 @@ curl -fsS http://localhost:3000/health
 docker compose run --rm api npm run verify
 ```
 
+## OpenCode local demo (project_description -> plan -> run)
+
+Inside a workspace where `opencode` is installed + authenticated:
+
+```bash
+cd boilerplate
+
+# 1) Write/adjust project_description.md
+# 2) Generate plan docs (GEMINI/AGENTS/RULER/ROADMAP)
+npm run ai:init-plan
+
+# 3) Implement ROADMAP (IN_PROGRESS) step via opencode
+npm run ai:run
+```
+
 ## Dev-factory generator
 
 ```bash

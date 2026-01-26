@@ -38,3 +38,19 @@ Manual run:
 ```bash
 docker compose run --rm api npm run prisma:migrate
 ```
+
+## OpenCode local demo (plan -> run)
+
+Prereq: `opencode` is installed + authenticated in the workspace.
+
+```bash
+# 1) Write/adjust project_description.md
+# 2) Generate plan docs (GEMINI/AGENTS/RULER/ROADMAP)
+npm run ai:init-plan
+
+# 3) Implement ROADMAP (IN_PROGRESS) step via opencode
+npm run ai:run
+
+# 4) Or run the full flow (includes docker up + verify)
+npm run ai:demo
+```
