@@ -1,8 +1,7 @@
 services:
   mysql:
     image: mysql:8
-    ports:
-      - "3306:3306"
+    # No host port binding by default (avoids 3306 conflicts).
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE:-app}
       MYSQL_USER: ${MYSQL_USER:-app}
