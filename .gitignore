@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+
+# Editors
+.idea/
+
+# Node
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+.turbo/
+.cache/
+
+# Factory outputs
+output/
+dev-factory/output/
+
+# Coder
+.coder/
