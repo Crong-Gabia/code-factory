@@ -1,0 +1,60 @@
+name: opencode-init-plan
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - boilerplate/project_description.md
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: opencode-init-plan
+  cancel-in-progress: false
+
+jobs:
+  init-plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install OpenCode CLI
+        shell: bash
+        run: |
+          bash scripts/install-opencode.sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          opencode --version
+
+      - name: Generate plan docs via OpenCode
+        working-directory: boilerplate
+        env:
+          OPENCODE_MODEL: ${{ vars.OPENCODE_MODEL }}
+          OPENCODE_AGENT: ${{ vars.OPENCODE_AGENT }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          npm run ai:init-plan
+
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: automation/opencode-init-plan
+          delete-branch: true
+          title: "chore: init plan from project_description"
+          commit-message: "chore: init plan docs"
+          body: |
+            - Trigger: `boilerplate/project_description.md`
+            - Action: generate `GEMINI.md`, `AGENTS.md`, `RULER.md`, `ROADMAP.md` via `opencode run`
+            - Next: merge this PR to trigger roadmap execution workflow

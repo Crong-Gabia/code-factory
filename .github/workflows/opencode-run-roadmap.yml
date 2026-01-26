@@ -1,0 +1,72 @@
+name: opencode-run-roadmap
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - boilerplate/ROADMAP.md
+      - boilerplate/RULER.md
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: opencode-run-roadmap
+  cancel-in-progress: false
+
+jobs:
+  run-roadmap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install OpenCode CLI
+        shell: bash
+        run: |
+          bash scripts/install-opencode.sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          opencode --version
+
+      - name: Run OpenCode on current ROADMAP step
+        working-directory: boilerplate
+        env:
+          OPENCODE_MODEL: ${{ vars.OPENCODE_MODEL }}
+          OPENCODE_AGENT: ${{ vars.OPENCODE_AGENT }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          npm run ai:run
+
+      - name: Start services
+        working-directory: boilerplate
+        run: |
+          docker compose up --build -d
+
+      - name: Verify
+        working-directory: boilerplate
+        run: |
+          curl -fsS http://localhost:3000/health
+          docker compose run --rm api npm run verify
+
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: automation/opencode-roadmap
+          delete-branch: true
+          title: "feat: implement ROADMAP IN_PROGRESS step"
+          commit-message: "feat: implement roadmap step"
+          body: |
+            - Trigger: `boilerplate/ROADMAP.md` (or `boilerplate/RULER.md`)
+            - Action: run `opencode run` against current `(IN_PROGRESS)` step
+            - Verify: `docker compose run --rm api npm run verify`

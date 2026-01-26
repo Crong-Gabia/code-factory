@@ -38,6 +38,10 @@ npm run ai:init-plan
 npm run ai:run
 ```
 
+## GitHub Actions demo (project_description -> PR -> run -> PR)
+
+See: `docs/GITHUB_ACTIONS_AUTOMATION.md`
+
 ## Dev-factory generator
 
 ```bash
