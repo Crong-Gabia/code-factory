@@ -11,4 +11,134 @@ model User {
   id        String   @id @default(cuid())
   email     String   @unique
   createdAt DateTime @default(now())
+  
+  // Relations
+  organized_meetings MeetingRequest[] @relation("Organizer")
+  participations     Participant[]    @relation("Participant")
+  notifications      Notification[]
+}
+
+model MeetingRequest {
+  id            String   @id @default(cuid())
+  title         String
+  duration_min  Int      // Duration in minutes
+  start_date    DateTime // Date range start (inclusive)
+  end_date      DateTime // Date range end (inclusive)
+  organizer_id  String
+  status        MeetingRequestStatus @default(CREATED)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  version       Int      @default(1) // For optimistic locking
+  
+  // Relations
+  organizer     User          @relation("Organizer", fields: [organizer_id], references: [id], onDelete: Cascade)
+  participants  Participant[]
+  confirmed_meeting ConfirmedMeeting?
+  notifications  Notification[]
+  
+  @@index([organizer_id])
+  @@index([status])
+  @@index([created_at])
+}
+
+model Participant {
+  id             String              @id @default(cuid())
+  request_id     String
+  user_id        String
+  is_required    Boolean              @default(true)
+  response_status ParticipantResponse @default(PENDING)
+  response_token String?              @unique @db.VarChar(255)
+  token_expires_at DateTime?
+  responded_at   DateTime?
+  created_at     DateTime            @default(now())
+  updated_at     DateTime            @updatedAt
+  
+  // Relations
+  request   MeetingRequest @relation(fields: [request_id], references: [id], onDelete: Cascade)
+  user      User           @relation("Participant", fields: [user_id], references: [id], onDelete: Cascade)
+  time_slots TimeSlot[] @relation("ParticipantTimeSlots")
+  
+  @@unique([request_id, user_id])
+  @@index([request_id])
+  @@index([user_id])
+  
+  @@index([response_status])
+}
+
+model TimeSlot {
+  id        String      @id @default(cuid())
+  participant_id String
+  slot_date DateTime    // Date component only (YYYY-MM-DD)
+  start_time String      // Time component (HH:MM:SS)
+  end_time   String      // Time component (HH:MM:SS)
+  status     TimeSlotStatus @default(AVAILABLE)
+  created_at DateTime    @default(now())
+  
+  // Relations
+  participant Participant @relation("ParticipantTimeSlots", fields: [participant_id], references: [id], onDelete: Cascade)
+  
+  @@unique([participant_id, slot_date, start_time, end_time])
+  @@index([participant_id])
+  @@index([slot_date])
+  @@index([status])
+}
+
+model ConfirmedMeeting {
+  id               String   @id @default(cuid())
+  request_id       String   @unique
+  confirmed_start  DateTime
+  confirmed_end    DateTime
+  room_id          String?
+  reservation_no   String?
+  created_at       DateTime @default(now())
+  
+  // Relations
+  request MeetingRequest @relation(fields: [request_id], references: [id], onDelete: Cascade)
+  
+  @@index([request_id])
+  @@index([confirmed_start])
+  @@index([room_id])
+}
+
+model Notification {
+  id          String           @id @default(cuid())
+  request_id  String
+  recipient_id String
+  type        NotificationType
+  sent_at     DateTime?
+  created_at  DateTime         @default(now())
+  
+  // Relations
+  request   MeetingRequest @relation(fields: [request_id], references: [id], onDelete: Cascade)
+  recipient User           @relation(fields: [recipient_id], references: [id], onDelete: Cascade)
+  
+  @@index([request_id])
+  @@index([recipient_id])
+  @@index([type])
+  @@index([sent_at])
+}
+
+// Enums
+enum MeetingRequestStatus {
+  CREATED
+  IN_PROGRESS
+  CONFIRMED
+  CANCELLED
+}
+
+enum ParticipantResponse {
+  PENDING
+  RESPONDED
+}
+
+enum TimeSlotStatus {
+  AVAILABLE
+  UNAVAILABLE
+  BLOCKED
+}
+
+enum NotificationType {
+  REQUEST
+  REMIND
+  CONFIRM
 }

@@ -18,6 +18,7 @@ fi
 
 echo "Pushing Coder template '$TEMPLATE_NAME' from $TEMPLATE_DIR"
 echo "- repo_path variable: $REPO_PATH"
+echo "- Optional vars picked from env: OPENCODE_MODEL, OPENCODE_AGENT, OPENAI_API_KEY, ANTHROPIC_API_KEY, GEMINI_API_KEY, OPENROUTER_API_KEY"
 echo
 
 echo "If not logged in yet, run:"
@@ -32,9 +33,31 @@ if ! curl -fsS http://localhost:3001 >/dev/null 2>&1; then
 fi
 
 set +e
+
+extra_vars=()
+if [[ -n "${OPENCODE_MODEL:-}" ]]; then
+  extra_vars+=(--variable opencode_model="$OPENCODE_MODEL")
+fi
+if [[ -n "${OPENCODE_AGENT:-}" ]]; then
+  extra_vars+=(--variable opencode_agent="$OPENCODE_AGENT")
+fi
+if [[ -n "${OPENAI_API_KEY:-}" ]]; then
+  extra_vars+=(--variable openai_api_key="$OPENAI_API_KEY")
+fi
+if [[ -n "${ANTHROPIC_API_KEY:-}" ]]; then
+  extra_vars+=(--variable anthropic_api_key="$ANTHROPIC_API_KEY")
+fi
+if [[ -n "${GEMINI_API_KEY:-}" ]]; then
+  extra_vars+=(--variable gemini_api_key="$GEMINI_API_KEY")
+fi
+if [[ -n "${OPENROUTER_API_KEY:-}" ]]; then
+  extra_vars+=(--variable openrouter_api_key="$OPENROUTER_API_KEY")
+fi
+
 coder templates push "$TEMPLATE_NAME" \
   -d "$TEMPLATE_DIR" \
   --variable repo_path="$REPO_PATH" \
+  "${extra_vars[@]}" \
   --yes \
   --ignore-lockfile
 rc=$?

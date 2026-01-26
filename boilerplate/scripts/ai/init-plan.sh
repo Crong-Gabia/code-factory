@@ -57,7 +57,13 @@ fi
 args+=(
   -f "$PROMPT_FILE"
   -f "$PROJECT_DESC_FILE"
-  "Generate the required docs using the attached prompt and project description."
 )
 
-opencode "${args[@]}"
+# IMPORTANT:
+# - We send the prompt message via STDIN instead of argv.
+# - In some environments, passing a trailing message via argv can be mis-parsed
+#   and treated as a file path (leading to "File not found: <message>").
+cat <<'EOF' | opencode "${args[@]}"
+ULTRAWORK MODE ENABLED!
+Generate the required docs using the attached prompt and project description.
+EOF

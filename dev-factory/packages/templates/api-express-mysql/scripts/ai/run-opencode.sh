@@ -51,7 +51,9 @@ args+=(
   -f "$PROJECT_DESC_FILE"
   -f "$ROADMAP_FILE"
   -f "$RULER_FILE"
-  "Implement the current ROADMAP (IN_PROGRESS) step described in the attached prompt."
 )
 
-opencode "${args[@]}"
+cat <<'EOF' | opencode "${args[@]}"
+ULTRAWORK MODE ENABLED!
+Implement the current ROADMAP (IN_PROGRESS) step described in the attached prompt.
+EOF

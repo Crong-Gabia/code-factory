@@ -14,6 +14,46 @@ variable "repo_path" {
   description = "Absolute host path to this repository; mounted into the workspace at /workspace"
 }
 
+variable "opencode_model" {
+  type        = string
+  description = "Optional: OPENCODE_MODEL (provider/model). If set, opencode can run non-interactively without selecting a model."
+  default     = ""
+}
+
+variable "opencode_agent" {
+  type        = string
+  description = "Optional: OPENCODE_AGENT (agent name). If set, opencode uses this agent by default."
+  default     = ""
+}
+
+variable "openai_api_key" {
+  type        = string
+  description = "Optional: OPENAI_API_KEY for OpenCode provider auth via environment variables."
+  default     = ""
+  sensitive   = true
+}
+
+variable "anthropic_api_key" {
+  type        = string
+  description = "Optional: ANTHROPIC_API_KEY for OpenCode provider auth via environment variables."
+  default     = ""
+  sensitive   = true
+}
+
+variable "gemini_api_key" {
+  type        = string
+  description = "Optional: GEMINI_API_KEY for OpenCode provider auth via environment variables."
+  default     = ""
+  sensitive   = true
+}
+
+variable "openrouter_api_key" {
+  type        = string
+  description = "Optional: OPENROUTER_API_KEY for OpenCode provider auth via environment variables."
+  default     = ""
+  sensitive   = true
+}
+
 variable "ca_cert_pem" {
   type        = string
   description = "Optional corporate/root CA bundle in PEM format (used to trust TLS interception for docker pulls)."
@@ -134,8 +174,8 @@ resource "docker_image" "workspace" {
 resource "docker_container" "workspace" {
   count = data.coder_workspace.me.start_count
 
-  image = docker_image.workspace.name
-  name  = "coder-${data.coder_workspace_owner.me.name}-${lower(data.coder_workspace.me.name)}"
+  image    = docker_image.workspace.name
+  name     = "coder-${data.coder_workspace_owner.me.name}-${lower(data.coder_workspace.me.name)}"
   hostname = data.coder_workspace.me.name
 
   command = [
@@ -152,13 +192,21 @@ resource "docker_container" "workspace" {
     EOT
   ]
 
-  env = [
-    "CODER_AGENT_TOKEN=${coder_agent.main.token}",
-    "DOCKER_HOST=tcp://${docker_container.dind.name}:2375",
-    "DIND_HOST=${docker_container.dind.name}",
-    "CA_CERT_PEM=${local.ca_cert_pem_effective}",
-    "CA_CERT_PEM_B64=${local.ca_cert_pem_b64_effective}",
-  ]
+  env = concat(
+    [
+      "CODER_AGENT_TOKEN=${coder_agent.main.token}",
+      "DOCKER_HOST=tcp://${docker_container.dind.name}:2375",
+      "DIND_HOST=${docker_container.dind.name}",
+      "CA_CERT_PEM=${local.ca_cert_pem_effective}",
+      "CA_CERT_PEM_B64=${local.ca_cert_pem_b64_effective}",
+    ],
+    var.opencode_model != "" ? ["OPENCODE_MODEL=${var.opencode_model}"] : [],
+    var.opencode_agent != "" ? ["OPENCODE_AGENT=${var.opencode_agent}"] : [],
+    var.openai_api_key != "" ? ["OPENAI_API_KEY=${var.openai_api_key}"] : [],
+    var.anthropic_api_key != "" ? ["ANTHROPIC_API_KEY=${var.anthropic_api_key}"] : [],
+    var.gemini_api_key != "" ? ["GEMINI_API_KEY=${var.gemini_api_key}"] : [],
+    var.openrouter_api_key != "" ? ["OPENROUTER_API_KEY=${var.openrouter_api_key}"] : [],
+  )
 
   networks_advanced {
     name = docker_network.private_network.name
