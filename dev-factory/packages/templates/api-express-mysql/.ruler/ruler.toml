@@ -1,0 +1,10 @@
+default_agents = ["opencode"]
+
+[agents.opencode]
+enabled = true
+
+[gitignore]
+enabled = false
+
+[mcp]
+enabled = false

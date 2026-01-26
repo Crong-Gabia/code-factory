@@ -1,0 +1,12 @@
+{
+  "name": "dev-factory",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "packages/factory-cli"
+  ],
+  "scripts": {
+    "build": "npm -w @dev-factory/factory-cli run build",
+    "factory:init": "npm -w @dev-factory/factory-cli run factory:init"
+  }
+}
