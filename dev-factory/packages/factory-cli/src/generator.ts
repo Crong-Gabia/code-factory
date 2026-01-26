@@ -29,13 +29,24 @@ export async function generateProject(params: GenerateProjectParams): Promise<vo
 async function chmodShellScripts(projectDir: string): Promise<void> {
   const scriptsDir = path.join(projectDir, 'scripts');
   try {
-    const entries = await fs.readdir(scriptsDir, { withFileTypes: true });
-    await Promise.all(
-      entries
-        .filter((e) => e.isFile() && e.name.endsWith('.sh'))
-        .map((e) => fs.chmod(path.join(scriptsDir, e.name), 0o755)),
-    );
+    await chmodShellScriptsRecursive(scriptsDir);
   } catch {
     // ignore
   }
+}
+
+async function chmodShellScriptsRecursive(dir: string): Promise<void> {
+  const entries = await fs.readdir(dir, { withFileTypes: true });
+  await Promise.all(
+    entries.map(async (e) => {
+      const fullPath = path.join(dir, e.name);
+      if (e.isDirectory()) {
+        await chmodShellScriptsRecursive(fullPath);
+        return;
+      }
+      if (e.isFile() && e.name.endsWith('.sh')) {
+        await fs.chmod(fullPath, 0o755);
+      }
+    }),
+  );
 }
