@@ -2,7 +2,7 @@ name: opencode-init-plan
 
 on:
   push:
-    branches: [master]
+    branches: [develop]
     paths:
       - boilerplate/project_description.md
   workflow_dispatch:
@@ -50,7 +50,8 @@ jobs:
       - name: Create PR
         uses: peter-evans/create-pull-request@v6
         with:
-          branch: automation/opencode-init-plan
+          base: develop
+          branch: feature/automation-opencode-init-plan
           delete-branch: true
           title: "chore: init plan from project_description"
           commit-message: "chore: init plan docs"

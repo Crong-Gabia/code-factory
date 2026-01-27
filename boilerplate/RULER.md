@@ -42,6 +42,15 @@ All error responses should follow a standard structure:
 - Do not commit secrets (keys/tokens/passwords).
 - Minimal input validation at I/O boundaries.
 
+## Git Workflow
+
+- Default/base branch: `develop`.
+- All work must be done on a new branch with one of these prefixes:
+  - `feature/` for features/changes
+  - `fix/` for bug fixes
+- Open a PR targeting `develop`.
+- Avoid direct pushes to `develop` (enforce via GitHub branch protection / rulesets).
+
 ## Auth (Ingress JWT assumption)
 
 - App does not verify JWT.

@@ -1,0 +1,29 @@
+name: branch-policy
+
+on:
+  pull_request:
+    branches: [develop]
+
+jobs:
+  enforce:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enforce base branch develop
+        run: |
+          if [ "${{ github.base_ref }}" != "develop" ]; then
+            echo "PR base branch must be 'develop'. Got: '${{ github.base_ref }}'" >&2
+            exit 1
+          fi
+
+      - name: Enforce branch prefix (feature/ or fix/)
+        run: |
+          ref="${{ github.head_ref }}"
+          case "$ref" in
+            feature/*|fix/*)
+              echo "OK: $ref"
+              ;;
+            *)
+              echo "Branch name must start with 'feature/' or 'fix/'. Got: '$ref'" >&2
+              exit 1
+              ;;
+          esac
