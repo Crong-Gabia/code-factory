@@ -35,6 +35,18 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           opencode --version
 
+      - name: Install + configure oh-my-opencode (repo config)
+        shell: bash
+        run: |
+          npm_prefix="$HOME/.local"
+          mkdir -p "$npm_prefix" "$npm_prefix/bin" "$HOME/.config/opencode"
+          npm install -g --prefix "$npm_prefix" oh-my-opencode@latest
+          echo "$npm_prefix/bin" >> "$GITHUB_PATH"
+          oh-my-opencode install --no-tui --claude=no --openai=yes --gemini=yes --copilot=no --opencode-zen=yes --zai-coding-plan=no --skip-auth
+          if [ -f "config/opencode/oh-my-opencode.json" ]; then
+            cp "config/opencode/oh-my-opencode.json" "$HOME/.config/opencode/oh-my-opencode.json"
+          fi
+
       - name: Generate plan docs via OpenCode
         working-directory: boilerplate
         env:
@@ -45,6 +57,22 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
+          # Preflight: at least one provider key must be present
+          if [ -z "${OPENAI_API_KEY}${ANTHROPIC_API_KEY}${GEMINI_API_KEY}${OPENROUTER_API_KEY}" ]; then
+            echo "No provider API keys found. Set one of: OPENAI_API_KEY / ANTHROPIC_API_KEY / GEMINI_API_KEY / OPENROUTER_API_KEY" >&2
+            exit 1
+          fi
+
+          # Default agent for automation runs
+          if [ -z "${OPENCODE_AGENT}" ]; then
+            export OPENCODE_AGENT="sisyphus"
+          fi
+
+          # Default model (avoid provider/model mismatch)
+          if [ -z "${OPENCODE_MODEL}" ]; then
+            export OPENCODE_MODEL="openai/gpt-5.1"
+          fi
+
           npm run ai:init-plan
 
       - name: Create PR
