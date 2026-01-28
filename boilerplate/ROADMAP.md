@@ -9,3 +9,5 @@
 4. 기능 구현 2 (TODO)
 
 5. 최적화 및 배포 (TODO)
+
+<!-- trigger test/opencode-run-roadmap (2026-01-28) -->
