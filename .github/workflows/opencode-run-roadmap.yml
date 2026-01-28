@@ -56,10 +56,22 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
+          # Preflight: at least one provider key must be present
+          if [ -z "${OPENAI_API_KEY}${ANTHROPIC_API_KEY}${GEMINI_API_KEY}${OPENROUTER_API_KEY}" ]; then
+            echo "No provider API keys found. Set one of: OPENAI_API_KEY / ANTHROPIC_API_KEY / GEMINI_API_KEY / OPENROUTER_API_KEY" >&2
+            exit 1
+          fi
+
           # Default agent for demo runs
           if [ -z "${OPENCODE_AGENT}" ]; then
             export OPENCODE_AGENT="sisyphus"
           fi
+
+          # Optional: if not provided, prefer a known-good model from `opencode models`
+          if [ -z "${OPENCODE_MODEL}" ]; then
+            export OPENCODE_MODEL="opencode/gpt-5.1"
+          fi
+
           npm run ai:run
 
       - name: Start services
