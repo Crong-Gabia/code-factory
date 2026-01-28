@@ -1,61 +1,68 @@
-# Ruler (Project Rules)
+# Project Rules (RULER)
 
-This project uses https://github.com/intellectronica/ruler.
+This file defines the **rules and guardrails** for evolving this repo.
 
-## Coding Style
+## Purpose & Scope
 
-- Prefer small, testable functions.
-- Keep files focused (one primary responsibility per file).
-- Avoid hidden side effects; pass dependencies explicitly.
-- No type-safety suppression (no `as any`, no `@ts-ignore`).
+- Purpose: Demo an **Express + MySQL + Prisma** API boilerplate that is maintained by non-interactive agents driven by documentation changes.
+- In scope:
+  - `GET /health` endpoint.
+  - `POST /users`, `GET /users` endpoints.
+  - User email must be **unique**.
+  - DB schema and migrations managed by **Prisma** against **MySQL**.
+- Out of scope (for now):
+  - Authentication / authorization flows.
+  - External integrations (mail, payments, third-party APIs).
 
-## JSON / DTO
+## Hard Technical Rules
 
-- JSON field naming: prefer `snake_case` across the project.
-- DTOs are for I/O boundaries only (HTTP request/response, DB row). Keep them separate from domain models.
+1. **Verification is mandatory**
+   - After meaningful changes (code, schema, or tests), run:
+     - `docker compose run --rm api npm run verify`
+   - A change is **not complete** if this command fails.
 
-## API Conventions
+2. **Database & schema**
+   - Use Prisma as the single source of truth for the MySQL schema.
+   - Migrations must be reproducible and checked into the repo.
+   - Email uniqueness must be enforced at the DB/Prisma layer (unique index) and covered by tests.
 
-- URL: kebab-case, versioning is optional (`/v1/...` if introduced).
-- Avoid verb-heavy paths (prefer resources like `/documents`, `/spaces/{id}`).
-- DTO naming (example): `CreateXRequest`, `XResponse`.
-- Success response: JSON object.
+3. **API design**
+   - `GET /health` should return HTTP 200 with a small JSON body indicating service status.
+   - `POST /users` should create a user and return HTTP 201 with user data (or a validation/conflict error if invalid/duplicate).
+   - `GET /users` should list users with predictable ordering (e.g., by creation time).
 
-### Error Model (recommended minimum)
+4. **Testing philosophy**
+   - Favor **realistic, end-to-end or integration-style tests** that exercise Express routes + Prisma + MySQL together.
+   - Never delete tests solely to fix a failing verify run.
+   - When a bug is found, add or extend a test before fixing the code.
 
-All error responses should follow a standard structure:
+## Non-functional Requirements (NFRs)
 
-```json
-{ "error": { "code": "STRING", "message": "STRING", "trace_id": "STRING" } }
-```
+These are intentionally lightweight but should guide future roadmap items.
 
-## Logging / Observability
+### Availability
 
-- Error logs MUST include: `trace_id`, `message`, `error_name`.
-- Propagate a request identifier (`x-request-id`) end-to-end.
+- Service should be simple to run locally via Docker Compose.
+- Startup should fail fast if the DB is unreachable or migrations are missing.
 
-## Security Guidelines
+### Performance
 
-- JWT is validated at Ingress, not in this app.
-- User identity is trusted only behind Ingress/internal network.
-- Never log credentials, tokens, or PII.
-- Do not commit secrets (keys/tokens/passwords).
-- Minimal input validation at I/O boundaries.
+- Endpoints are low-volume but should avoid unnecessary N+1 queries.
+- Keep latency reasonable for typical CRUD operations with Prisma and MySQL.
 
-## Git Workflow
+### Security
 
-- Default/base branch: `develop`.
-- All work must be done on a new branch with one of these prefixes:
-  - `feature/` for features/changes
-  - `fix/` for bug fixes
-- Open a PR targeting `develop`.
-- Avoid direct pushes to `develop` (enforce via GitHub branch protection / rulesets).
+- Do not log sensitive data such as raw passwords (if introduced later).
+- Validate and sanitize user input for `/users` endpoints.
 
-## Auth (Ingress JWT assumption)
+### Observability
 
-- App does not verify JWT.
-- `src/middlewares/userContext.ts` reads headers:
-  - `x-user-id`
-  - `x-user-email`
-  - `x-user-roles`
-- The middleware stores the user on `req.user`.
+- Prefer structured logging (e.g., JSON logs) over ad-hoc console prints.
+- Log at least: request method, path, status code, and latency for each HTTP request.
+
+## Process Rules for Agents
+
+- Follow `ROADMAP.md` ordering; do not jump ahead without updating the roadmap first.
+- Before introducing new concepts (e.g., auth, queues), update this file to extend the rules.
+- Keep changes small and tied to a single roadmap step.
+- Prefer improving tests and docs alongside behavior changes.
