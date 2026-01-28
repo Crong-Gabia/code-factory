@@ -83,6 +83,11 @@ jobs:
           delete-branch: true
           title: "chore: init plan from project_description"
           commit-message: "chore: init plan docs"
+          add-paths: |
+            boilerplate/GEMINI.md
+            boilerplate/AGENTS.md
+            boilerplate/RULER.md
+            boilerplate/ROADMAP.md
           body: |
             - Trigger: `boilerplate/project_description.md`
             - Action: generate `GEMINI.md`, `AGENTS.md`, `RULER.md`, `ROADMAP.md` via `opencode run`

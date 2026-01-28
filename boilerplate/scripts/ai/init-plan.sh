@@ -32,6 +32,15 @@ Turn the attached `project_description.md` into a runnable plan and project rule
 - Steps must be verifiable (mention how to verify, e.g. `npm run verify`).
 - Keep scope realistic for this repo (Express/Nest + MySQL + Prisma).
 - Do not change application code in this phase; only create/update the docs listed above.
+
+## Non-interactive mode
+- This run is non-interactive. Do NOT ask questions.
+- If something is ambiguous, pick reasonable defaults and proceed.
+
+## Output rules
+- Write the actual files listed above (do not output a plan only).
+- Do NOT create or modify any files under `.sisyphus/`.
+- Prefer Korean for these documents.
 EOF
 
 echo "Generated init prompt: $PROMPT_FILE"
