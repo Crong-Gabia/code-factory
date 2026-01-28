@@ -43,7 +43,7 @@ jobs:
           mkdir -p "$npm_prefix" "$npm_prefix/bin" "$HOME/.config/opencode"
           npm install -g --prefix "$npm_prefix" oh-my-opencode@latest
           echo "$npm_prefix/bin" >> "$GITHUB_PATH"
-          oh-my-opencode install || true
+          oh-my-opencode install --no-tui --claude=no --openai=yes --gemini=yes --copilot=no --opencode-zen=yes --zai-coding-plan=no --skip-auth
           cp "config/opencode/oh-my-opencode.json" "$HOME/.config/opencode/oh-my-opencode.json"
 
       - name: Run OpenCode on current ROADMAP step
