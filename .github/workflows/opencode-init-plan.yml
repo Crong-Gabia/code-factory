@@ -2,7 +2,7 @@ name: opencode-init-plan
 
 on:
   push:
-    branches: [develop]
+    branches: [develop, "test/**"]
     paths:
       - boilerplate/project_description.md
   workflow_dispatch:
@@ -34,6 +34,16 @@ jobs:
           bash scripts/install-opencode.sh
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           opencode --version
+
+      - name: Install + configure oh-my-opencode (repo config)
+        shell: bash
+        run: |
+          npm_prefix="$HOME/.local"
+          mkdir -p "$npm_prefix" "$npm_prefix/bin" "$HOME/.config/opencode"
+          npm install -g --prefix "$npm_prefix" oh-my-opencode@latest
+          echo "$npm_prefix/bin" >> "$GITHUB_PATH"
+          oh-my-opencode install || true
+          cp "config/opencode/oh-my-opencode.json" "$HOME/.config/opencode/oh-my-opencode.json"
 
       - name: Generate plan docs via OpenCode
         working-directory: boilerplate
