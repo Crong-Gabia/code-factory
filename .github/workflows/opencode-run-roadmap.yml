@@ -72,7 +72,7 @@ jobs:
       - name: Create PR
         uses: peter-evans/create-pull-request@v6
         with:
-          base: develop
+          base: test/opencode-flow
           branch: feature/automation-opencode-roadmap
           delete-branch: true
           title: "feat: implement ROADMAP IN_PROGRESS step"

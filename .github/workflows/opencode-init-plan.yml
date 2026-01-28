@@ -60,7 +60,7 @@ jobs:
       - name: Create PR
         uses: peter-evans/create-pull-request@v6
         with:
-          base: develop
+          base: test/opencode-flow
           branch: feature/automation-opencode-init-plan
           delete-branch: true
           title: "chore: init plan from project_description"
@@ -68,4 +68,4 @@ jobs:
           body: |
             - Trigger: `boilerplate/project_description.md`
             - Action: generate `GEMINI.md`, `AGENTS.md`, `RULER.md`, `ROADMAP.md` via `opencode run`
-            - Next: merge this PR to trigger roadmap execution workflow
+            - Next: merge this PR to trigger roadmap execution workflow (on the same base branch)
