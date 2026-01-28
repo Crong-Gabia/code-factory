@@ -19,6 +19,7 @@ concurrency:
 jobs:
   run-roadmap:
     runs-on: ubuntu-latest
+    environment: test
     timeout-minutes: 60
     steps:
       - name: Checkout
