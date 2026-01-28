@@ -111,9 +111,9 @@ jobs:
           base: develop
           branch: feature/automation-opencode-roadmap
           delete-branch: true
-          title: "feat: implement ROADMAP IN_PROGRESS step"
-          commit-message: "feat: implement roadmap step"
+          title: "feat: ROADMAP (IN_PROGRESS) 단계 구현"
+          commit-message: "feat: roadmap 단계 구현"
           body: |
-            - Trigger: `boilerplate/ROADMAP.md` (or `boilerplate/RULER.md`)
-            - Action: run `opencode run` against current `(IN_PROGRESS)` step
-            - Verify: `docker compose run --rm api npm run verify`
+            - 트리거: `boilerplate/ROADMAP.md` (또는 `boilerplate/RULER.md`)
+            - 동작: 현재 `(IN_PROGRESS)` 단계에 대해 `opencode run` 실행
+            - 검증: `docker compose run --rm api npm run verify`

@@ -12,6 +12,10 @@ dist/
 .turbo/
 .cache/
 
+# AI agent scratch
+.sisyphus/
+**/.sisyphus/
+
 # Factory outputs
 output/
 dev-factory/output/

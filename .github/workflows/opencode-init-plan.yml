@@ -81,9 +81,14 @@ jobs:
           base: develop
           branch: feature/automation-opencode-init-plan
           delete-branch: true
-          title: "chore: init plan from project_description"
-          commit-message: "chore: init plan docs"
+          title: "chore: project_description 기반 초기 문서 생성"
+          commit-message: "chore: 초기 문서 생성"
+          add-paths: |
+            boilerplate/GEMINI.md
+            boilerplate/AGENTS.md
+            boilerplate/RULER.md
+            boilerplate/ROADMAP.md
           body: |
-            - Trigger: `boilerplate/project_description.md`
-            - Action: generate `GEMINI.md`, `AGENTS.md`, `RULER.md`, `ROADMAP.md` via `opencode run`
-            - Next: merge this PR to trigger roadmap execution workflow
+            - 트리거: `boilerplate/project_description.md`
+            - 동작: `opencode run`으로 `GEMINI.md`, `AGENTS.md`, `RULER.md`, `ROADMAP.md` 생성
+            - 다음: 이 PR을 머지하면 ROADMAP 실행 워크플로우가 트리거됩니다.
