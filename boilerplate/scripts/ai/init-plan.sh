@@ -57,6 +57,7 @@ fi
 args+=(
   -f "$PROMPT_FILE"
   -f "$PROJECT_DESC_FILE"
+  --
   "Generate the required docs using the attached prompt and project description."
 )
 

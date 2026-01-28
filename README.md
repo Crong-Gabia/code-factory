@@ -42,6 +42,10 @@ npm run ai:run
 
 See: `docs/GITHUB_ACTIONS_AUTOMATION.md`
 
+## OpenCode config (keep local/Coder/CI consistent)
+
+See: `docs/OPENCODE_SETUP.ko.md`
+
 ## Dev-factory generator
 
 ```bash

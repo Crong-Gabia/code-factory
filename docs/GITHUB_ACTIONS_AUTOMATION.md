@@ -33,14 +33,16 @@ Automation enforces this via:
 
 Set repository variables (Settings -> Secrets and variables -> Actions -> Variables):
 
-- `OPENCODE_MODEL`
-  - Example: `openai/gpt-4.1` or your preferred provider/model
-- `OPENCODE_AGENT` (optional)
+- `OPENCODE_MODEL` (optional)
+  - If set, it is passed to `opencode run --model ...`.
+  - Recommendation: keep it consistent with `config/opencode/oh-my-opencode.json`.
+- `OPENCODE_AGENT`
   - Example: `sisyphus`
+  - The agent->model mapping is defined in `config/opencode/oh-my-opencode.json` and applied by the workflows.
 
 ## Required secrets
 
-Depending on the provider used by `OPENCODE_MODEL`, set one of these secrets:
+Depending on the models used by `config/opencode/oh-my-opencode.json`, set the required provider API key(s) as GitHub Secrets:
 
 - `OPENAI_API_KEY`
 - `ANTHROPIC_API_KEY`
@@ -48,3 +50,17 @@ Depending on the provider used by `OPENCODE_MODEL`, set one of these secrets:
 - `OPENROUTER_API_KEY`
 
 If you use a different provider, add its key as a secret and expose it in the workflow `env`.
+
+## Keeping local/Coder/GitHub Actions consistent
+
+- Canonical config (committed): `config/opencode/oh-my-opencode.json`
+- Local override (gitignored): `.coder/opencode/oh-my-opencode.json`
+
+Coder workspace applies:
+
+- `.coder/opencode/oh-my-opencode.json` if present
+- otherwise `config/opencode/oh-my-opencode.json`
+
+GitHub Actions always applies:
+
+- `config/opencode/oh-my-opencode.json`

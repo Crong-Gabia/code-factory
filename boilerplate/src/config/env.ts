@@ -2,16 +2,14 @@ import { config as loadDotenv } from "dotenv";
 
 loadDotenv();
 
-function requireEnv(name: string): string {
+function optionalEnv(name: string): string | undefined {
   const v = process.env[name];
-  if (!v) {
-    throw new Error(`Missing required env var: ${name}`);
-  }
+  if (!v) return undefined;
   return v;
 }
 
 export const env = {
   nodeEnv: process.env.NODE_ENV ?? "development",
   port: Number(process.env.PORT ?? "3000"),
-  databaseUrl: requireEnv("DATABASE_URL"),
+  databaseUrl: optionalEnv("DATABASE_URL"),
 };

@@ -4,7 +4,7 @@
 
 2. 사용자 컨텍스트(ingress 헤더) 연동 (DONE)
 
-3. 기능 구현 1 (TODO)
+3. 기능 구현 1 (IN_PROGRESS)
 
 4. 기능 구현 2 (TODO)
 
