@@ -52,7 +52,7 @@ args+=(
   -f "$ROADMAP_FILE"
   -f "$RULER_FILE"
   --
-  "Implement the current ROADMAP (IN_PROGRESS) step described in the attached prompt."
+  "Implement the current ROADMAP (IN_PROGRESS) step described in the attached prompt. ultrawork"
 )
 
 opencode "${args[@]}"
