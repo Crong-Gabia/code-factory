@@ -55,6 +55,10 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
+          # Default agent for demo runs
+          if [ -z "${OPENCODE_AGENT}" ]; then
+            export OPENCODE_AGENT="sisyphus"
+          fi
           npm run ai:init-plan
 
       - name: Create PR
