@@ -7,11 +7,17 @@
     "oracle": {
       "model": "openai/o3-mini"
     },
+    "prometheus": {
+      "model": "openai/gpt-5.1"
+    },
+    "metis": {
+      "model": "openai/gpt-5.1"
+    },
     "frontend-ui-ux-engineer": {
-      "model": "opencode/gemini-3-flash"
+      "model": "openai/gpt-4o-mini"
     },
     "multimodal-looker": {
-      "model": "opencode/gemini-3-flash"
+      "model": "openai/gpt-4o-mini"
     },
     "explore": {
       "model": "openai/gpt-5.1-codex-mini"
@@ -20,7 +26,30 @@
       "model": "openai/gpt-4.1"
     },
     "document-writer": {
-      "model": "opencode/gemini-3-flash"
+      "model": "openai/gpt-4.1"
+    }
+  },
+  "categories": {
+    "quick": {
+      "model": "openai/gpt-5-nano"
+    },
+    "visual-engineering": {
+      "model": "openai/gpt-4o-mini"
+    },
+    "writing": {
+      "model": "openai/gpt-4.1"
+    },
+    "ultrabrain": {
+      "model": "openai/o3-mini"
+    },
+    "unspecified-low": {
+      "model": "openai/gpt-5.1"
+    },
+    "unspecified-high": {
+      "model": "openai/o3-mini"
+    },
+    "artistry": {
+      "model": "openai/gpt-4o"
     }
   }
 }
