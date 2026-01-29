@@ -51,6 +51,30 @@ All error responses should follow a standard structure:
 - Open a PR targeting `main`.
 - Avoid direct pushes to `main` (enforce via GitHub branch protection / rulesets).
 
+## Pull Request (PR) Rules (Required)
+
+### Language
+
+- All PR titles and PR bodies MUST be written in Korean.
+- If the change introduces or references user-facing behavior, keep the wording understandable to non-developers.
+
+### PR Body Template
+
+- All PRs MUST follow the repository PR template (`.github/pull_request_template.md`).
+- At minimum, the PR body must include:
+  - 목적
+  - 변경사항
+  - 검증
+  - Risks & Edge Cases
+  - Decision Log
+  - Known Issues
+  - Rollback Plan
+
+### Quality bar
+
+- If there are known risks or edge cases, they MUST be explicitly listed.
+- If there are meaningful tradeoffs, they MUST be recorded in Decision Log (alternatives considered + why chosen).
+
 ## Auth (Ingress JWT assumption)
 
 - App does not verify JWT.
