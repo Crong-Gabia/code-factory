@@ -2,7 +2,7 @@ name: opencode-init-plan
 
 on:
   push:
-    branches: [develop]
+    branches: [main]
     paths:
       - boilerplate/project_description.md
   workflow_dispatch:
@@ -78,7 +78,7 @@ jobs:
       - name: Create PR
         uses: peter-evans/create-pull-request@v6
         with:
-          base: develop
+          base: main
           branch: feature/automation-opencode-init-plan
           delete-branch: true
           title: "chore: project_description 기반 초기 문서 생성"

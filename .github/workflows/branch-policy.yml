@@ -2,16 +2,16 @@ name: branch-policy
 
 on:
   pull_request:
-    branches: [develop]
+    branches: [main]
 
 jobs:
   enforce:
     runs-on: ubuntu-latest
     steps:
-      - name: Enforce base branch develop
+      - name: Enforce base branch main
         run: |
-          if [ "${{ github.base_ref }}" != "develop" ]; then
-            echo "PR base branch must be 'develop'. Got: '${{ github.base_ref }}'" >&2
+          if [ "${{ github.base_ref }}" != "main" ]; then
+            echo "PR base branch must be 'main'. Got: '${{ github.base_ref }}'" >&2
             exit 1
           fi
 

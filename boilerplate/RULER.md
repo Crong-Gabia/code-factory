@@ -44,12 +44,12 @@ All error responses should follow a standard structure:
 
 ## Git Workflow
 
-- Default/base branch: `develop`.
+- Default/base branch: `main`.
 - All work must be done on a new branch with one of these prefixes:
   - `feature/` for features/changes
   - `fix/` for bug fixes
-- Open a PR targeting `develop`.
-- Avoid direct pushes to `develop` (enforce via GitHub branch protection / rulesets).
+- Open a PR targeting `main`.
+- Avoid direct pushes to `main` (enforce via GitHub branch protection / rulesets).
 
 ## Auth (Ingress JWT assumption)
 
