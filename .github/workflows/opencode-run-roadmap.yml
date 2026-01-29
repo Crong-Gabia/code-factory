@@ -2,7 +2,7 @@ name: opencode-run-roadmap
 
 on:
   push:
-    branches: [develop]
+    branches: [main]
     paths:
       - boilerplate/ROADMAP.md
       - boilerplate/RULER.md
@@ -108,7 +108,7 @@ jobs:
       - name: Create PR
         uses: peter-evans/create-pull-request@v6
         with:
-          base: develop
+          base: main
           branch: feature/automation-opencode-roadmap
           delete-branch: true
           title: "feat: ROADMAP (IN_PROGRESS) 단계 구현"

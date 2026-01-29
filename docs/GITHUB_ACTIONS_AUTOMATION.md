@@ -8,12 +8,12 @@ This repo includes two workflows to demonstrate:
 ## Workflows
 
 - `.github/workflows/opencode-init-plan.yml`
-  - Trigger: change to `boilerplate/project_description.md` on `develop`
+  - Trigger: change to `boilerplate/project_description.md` on `main`
   - Runs: `cd boilerplate && npm run ai:init-plan`
   - Output: PR that updates/creates `GEMINI.md`, `AGENTS.md`, `RULER.md`, `ROADMAP.md`
 
 - `.github/workflows/opencode-run-roadmap.yml`
-  - Trigger: change to `boilerplate/ROADMAP.md` (or `boilerplate/RULER.md`) on `develop`
+  - Trigger: change to `boilerplate/ROADMAP.md` (or `boilerplate/RULER.md`) on `main`
   - Runs: `cd boilerplate && npm run ai:run`, then `docker compose up` and `npm run verify`
   - Output: PR that implements the current `(IN_PROGRESS)` step
 
@@ -22,8 +22,9 @@ This repo includes two workflows to demonstrate:
 This repo expects a Git workflow:
 
 - Base branch: `develop`
-- Work branches: `feature/*` or `fix/*`
-- PRs must target `develop`
+- Base branch: `main`
+  - Work branches: `feature/*` or `fix/*`
+- PRs must target `main`
 
 Automation enforces this via:
 
