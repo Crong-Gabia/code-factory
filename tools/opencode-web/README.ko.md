@@ -22,8 +22,12 @@
 ```bash
 cd tools/opencode-web
 
-export OPENAI_API_KEY="..."
-export GEMINI_API_KEY="..."
+./run.command
+
+# (선택) 이미 환경변수로 주입하고 싶으면(키체인 대신)
+# export OPENAI_API_KEY="..."
+# export GEMINI_API_KEY="..."
+# ./run.command
 
 # (선택) OpenRouter 사용 시
 # export OPENROUTER_API_KEY="..."
@@ -32,7 +36,6 @@ export GEMINI_API_KEY="..."
 export PROJECT_DIR="$HOME/work/my-repo"
 
 chmod +x run.command
-./run.command
 ```
 
 - 접속: http://localhost:4096
@@ -83,4 +86,23 @@ mkdir -p tools/opencode-web/user-config
 ```bash
 cd tools/opencode-web
 docker compose -f compose.yml down
+```
+
+## Keychain 기반 무입력 실행(권장)
+
+`run.command`는 기본적으로 macOS Keychain을 사용합니다.
+
+- 처음 1회 실행 시, 키가 없으면 터미널에서 키를 입력받아 Keychain에 저장합니다.
+- 이후에는 키 입력 없이 `./run.command`만 실행하면 됩니다.
+
+Keychain 저장 키 이름:
+
+- `code-factory.opencode.OPENAI_API_KEY`
+- `code-factory.opencode.GEMINI_API_KEY`
+
+Keychain 초기화(키 삭제) 예시:
+
+```bash
+security delete-generic-password -a "$USER" -s "code-factory.opencode.OPENAI_API_KEY" || true
+security delete-generic-password -a "$USER" -s "code-factory.opencode.GEMINI_API_KEY" || true
 ```
