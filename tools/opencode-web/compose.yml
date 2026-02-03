@@ -1,0 +1,32 @@
+# OpenCode Web UI (macOS local)
+# - localhost only: http://localhost:4096
+# - Required env: OPENAI_API_KEY, GEMINI_API_KEY
+# - Optional env: PROJECT_DIR (host path mounted into container as /workspace)
+
+services:
+  opencode-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /workspace
+    ports:
+      - "127.0.0.1:4096:4096"
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+    volumes:
+      # Persist OpenCode config/sessions across restarts
+      - opencode_config:/root/.config/opencode
+
+      # Project workspace
+      # If PROJECT_DIR is not set, an empty local directory is mounted.
+      - ${PROJECT_DIR:-./empty-workspace}:/workspace
+    command: >
+      bash -lc "
+        mkdir -p /root/.config/opencode &&
+        oh-my-opencode install --no-tui --skip-auth --openai=yes --gemini=yes --claude=no --copilot=no --opencode-zen=yes --zai-coding-plan=no &&
+        opencode web --hostname 0.0.0.0 --port 4096
+      "
+
+volumes:
+  opencode_config:
