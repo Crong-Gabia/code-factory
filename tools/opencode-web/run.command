@@ -13,6 +13,10 @@ if [[ -z "${GEMINI_API_KEY:-}" ]]; then
   exit 1
 fi
 
+if [[ -n "${OPENROUTER_API_KEY:-}" ]]; then
+  echo "OPENROUTER_API_KEY detected (optional)"
+fi
+
 mkdir -p "./empty-workspace"
 
 echo "Building image (latest opencode/oh-my-opencode)..."

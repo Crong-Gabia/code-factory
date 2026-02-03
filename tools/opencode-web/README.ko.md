@@ -25,6 +25,9 @@ cd tools/opencode-web
 export OPENAI_API_KEY="..."
 export GEMINI_API_KEY="..."
 
+# (선택) OpenRouter 사용 시
+# export OPENROUTER_API_KEY="..."
+
 # (선택) 작업할 프로젝트 디렉토리(호스트 경로)
 export PROJECT_DIR="$HOME/work/my-repo"
 
@@ -59,6 +62,21 @@ export PROJECT_DIR="$HOME/work/my-repo"
 ```
 
 > 컨테이너는 호스트 파일 시스템을 기본적으로 볼 수 없어서, 작업할 프로젝트는 마운트로 넘겨줘야 합니다.
+
+## OpenCode 설정(팀 기본값 + 개인 오버라이드)
+
+우선순위는 아래 순서로 적용됩니다.
+
+1) **개인 오버라이드(추천)**: `tools/opencode-web/user-config/oh-my-opencode.json`
+2) 레포 기본 설정: `config/opencode/oh-my-opencode.json`
+3) `oh-my-opencode install`로 생성된 기본 설정
+
+개인 오버라이드를 쓰려면:
+
+```bash
+mkdir -p tools/opencode-web/user-config
+# 개인 설정 파일을 여기에 두세요(커밋 금지)
+```
 
 ## 종료
 

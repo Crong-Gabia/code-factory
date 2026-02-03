@@ -14,6 +14,7 @@ services:
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       GEMINI_API_KEY: ${GEMINI_API_KEY}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
     volumes:
       # Persist OpenCode config/sessions across restarts
       - opencode_config:/root/.config/opencode
@@ -21,10 +22,20 @@ services:
       # Project workspace
       # If PROJECT_DIR is not set, an empty local directory is mounted.
       - ${PROJECT_DIR:-./empty-workspace}:/workspace
+
+      # Optional user override config (do not commit secrets)
+      - ./user-config:/user-config
     command: >
       bash -lc "
         mkdir -p /root/.config/opencode &&
         oh-my-opencode install --no-tui --skip-auth --openai=yes --gemini=yes --claude=no --copilot=no --opencode-zen=yes --zai-coding-plan=no &&
+        if [ -f /user-config/oh-my-opencode.json ]; then
+          echo 'Using user override: tools/opencode-web/user-config/oh-my-opencode.json' &&
+          cp -f /user-config/oh-my-opencode.json /root/.config/opencode/oh-my-opencode.json;
+        elif [ -f /workspace/config/opencode/oh-my-opencode.json ]; then
+          echo 'Using repo config: config/opencode/oh-my-opencode.json' &&
+          cp -f /workspace/config/opencode/oh-my-opencode.json /root/.config/opencode/oh-my-opencode.json;
+        fi &&
         opencode web --hostname 0.0.0.0 --port 4096
       "
 
