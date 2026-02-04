@@ -26,15 +26,17 @@ Usage:
 Options:
   --check-only                 Only run host preflight checks
   --yes                        Non-interactive (assume yes)
-  --no-web                      Do not launch OpenCode Web UI
+  --no-web                      Do not launch OpenCode Web UI on host
   --vm-prefix <prefix>          VM name prefix (default: opencode-cua)
   --unattended <preset>         Lume unattended preset (default: sequoia; also: tahoe)
 
 What it does:
   1) Preflight checks (Apple Silicon + macOS >= 13 + disk/RAM)
   2) Install Lume if missing
-  3) Create golden VM (unattended, SSH enabled) and clone 2 dev VMs
-  4) Optionally launch OpenCode Web UI on host (tools/opencode-web)
+  3) Create golden VM (unattended, SSH enabled)
+  4) Prepare golden VM (copy pilot scripts + install opencode non-admin)
+  5) Clone 2 dev VMs from golden
+  6) (Optional) Launch OpenCode Web UI on host (tools/opencode-web) for troubleshooting
 EOF
 }
 
@@ -180,7 +182,7 @@ ensure_vm_clone() {
 
 maybe_launch_web_ui() {
   if ! $LAUNCH_WEB; then
-    log "Skipping OpenCode Web UI launch (--no-web)"
+    log "Skipping host OpenCode Web UI launch (--no-web)"
     return 0
   fi
 
@@ -197,6 +199,53 @@ maybe_launch_web_ui() {
 
   log "Launching OpenCode Web UI (host) via tools/opencode-web/run.command"
   bash "$opencode_web_dir/run.command"
+}
+
+lume_ssh() {
+  local vm="$1"
+  shift
+  # Default unattended preset creates user/password lume/lume.
+  lume ssh "$vm" -u lume -p lume "$@"
+}
+
+ensure_golden_running_for_ssh() {
+  if lume_ssh "$GOLDEN_NAME" "echo ready" >/dev/null 2>&1; then
+    return 0
+  fi
+
+  log "Starting golden VM headless for bootstrap..."
+  lume run "$GOLDEN_NAME" --no-display --shared-dir "$(pwd):ro" >/dev/null 2>&1 &
+
+  log "Waiting for SSH to become available..."
+  for i in $(seq 1 120); do
+    if lume_ssh "$GOLDEN_NAME" "echo ready" >/dev/null 2>&1; then
+      log "SSH ready"
+      return 0
+    fi
+    sleep 5
+  done
+  die "SSH not available on golden VM. Try: lume run $GOLDEN_NAME (ensure Remote Login enabled)."
+}
+
+ensure_golden_prepared() {
+  ensure_golden_running_for_ssh
+
+  if lume_ssh "$GOLDEN_NAME" "test -f ~/cua-pilot/.prepared-v1" >/dev/null 2>&1; then
+    log "Golden VM already prepared"
+    return 0
+  fi
+
+  log "Copying pilot scripts into golden VM"
+  lume_ssh "$GOLDEN_NAME" "mkdir -p ~/cua-pilot"
+  lume_ssh "$GOLDEN_NAME" "cp -f '/Volumes/My Shared Files/vm-bootstrap.sh' ~/cua-pilot/vm-bootstrap.sh"
+  lume_ssh "$GOLDEN_NAME" "cp -f '/Volumes/My Shared Files/vm-run-opencode-web.sh' ~/cua-pilot/vm-run-opencode-web.sh"
+  lume_ssh "$GOLDEN_NAME" "chmod +x ~/cua-pilot/vm-bootstrap.sh ~/cua-pilot/vm-run-opencode-web.sh"
+
+  log "Bootstrapping golden VM toolchain (non-admin; may take a while)"
+  lume_ssh "$GOLDEN_NAME" "bash ~/cua-pilot/vm-bootstrap.sh"
+
+  lume_ssh "$GOLDEN_NAME" "touch ~/cua-pilot/.prepared-v1"
+  log "Golden VM prepared"
 }
 
 while [[ $# -gt 0 ]]; do
@@ -243,6 +292,8 @@ fi
 ensure_lume
 
 ensure_vm_golden
+ensure_golden_prepared
+lume stop "$GOLDEN_NAME" >/dev/null 2>&1 || true
 ensure_vm_clone "$GOLDEN_NAME" "$DEV1_NAME"
 ensure_vm_clone "$GOLDEN_NAME" "$DEV2_NAME"
 
@@ -253,6 +304,7 @@ cat <<EOF
 
 Next:
 - Start a VM: lume run "$DEV1_NAME"
+- Start Web:  inside VM terminal: ~/cua-pilot/vm-run-opencode-web.sh
 - SSH:       lume ssh "$DEV1_NAME" "whoami"
 
 Note:
